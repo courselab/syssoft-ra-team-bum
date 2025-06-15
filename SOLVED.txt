@@ -1,0 +1,13 @@
+  Para a implementação do exercício, primeiramente, realizei alterações no arquivo libc.S.
+  Optei por exibir o tamanho convencional de memória (int0x12) e, para isto, defini o label `get_memory_size`, chamando o serviço responsável e retornando. No arquivo main.c, adicionei a declaração de tal função e a invoquei dentro da função main, recuperando o valor inteiro dos quilobytes de memória. 
+
+  A partir disso, para poder exibir o resultado na tela, aproveitando a implementação do printf, foi preciso converter o valor inteiro para string - então, foi construída a função int_to_string para realizar a conversão e ser possível utilizar o printf (que aceita apenas strings como argumento). Foi criado um buffer para lidar com a construção da string.
+
+  Para que a implementação executasse, foi necessária uma manipulação de flag no Makefile, modificando o arquivo build.mk, adicionando a flag `-fno-stack-protector` para evitar o seguinte erro:
+`
+gcc -m16 main.o libc.o -nostartfiles -nostdlib -T hello.ld -orphan-handling=discard -o hello.bin
+/usr/bin/ld: main.o: in function `main':
+main.c:(.text+0x17e): undefined reference to `__stack_chk_fail'
+collect2: error: ld returned 1 exit status
+make: *** [build.mk:14: hello.bin] Error 1
+`
